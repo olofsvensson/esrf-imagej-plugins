@@ -12,6 +12,9 @@
 * Changes:                                                            *
 *                                                                     *
 *                                                                     *
+* 16.04. 2015  Linus Pithan					       *
+*	       - added support for "SignedLong" DataType as used in    *
+*		 MaxiPix at ID3					       *
 * 25.02. 2008  Peter Cloetens                                         *
 *              - close RandomAccessFile in after reading the header   *
 *                file remained open after opening an EDF-image        *
@@ -221,7 +224,7 @@ public class EdfRead_ implements PlugIn {
       }
       if (key.equals("DataType"))
       {
-		    if (param.equals("UnsignedLong") || param.equals("UnsignedInteger"))
+		    if (param.equals("UnsignedLong") || param.equals("UnsignedInteger") || param.equals("SignedLong"))  // SignedLong added by Linus Pithan
         {
 		      fileInfo.fileType = fileInfo.GRAY32_INT;
         }

@@ -183,7 +183,8 @@ public class ESRF_Reader implements PlugIn {
 			}
 			if (key.equals("DataType")) {
 				if (param.equals("UnsignedLong")
-						|| param.equals("UnsignedInteger")) {
+						|| param.equals("UnsignedInteger")
+						|| param.equals("SignedInteger")) {
 					fileInfo.fileType = FileInfo.GRAY32_INT;
 				} else if (param.equals("UnsignedShort")) {
 					fileInfo.fileType = FileInfo.GRAY16_UNSIGNED;

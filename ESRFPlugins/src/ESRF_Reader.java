@@ -9,10 +9,13 @@
  * reading EDF/EHF format headers                                      *
  *                                                                     *
  *                                                                     *
- * Changes:         
- * 
- * 04.01. 2012  Olof Svensson
- *              - Cleanup of code
+ * Changes:                                                            *
+ *                                                                     *
+ * 18. 2. 2016  Olof Svensson                                          *
+ *              - Added support for "SignedInteger"                    *
+ *                                                                     *
+ * 04.01. 2012  Olof Svensson                                          *
+ *              - Cleanup of code                                      *
  *                                                                     *
  * 29.11. 2001  Petr Mikulik                                           *
  *              - support "UnsignedByte"                               *

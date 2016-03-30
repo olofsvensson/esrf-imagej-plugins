@@ -3,6 +3,7 @@
 	<name>ESRFPlugins</name>
 	<comment></comment>
 	<projects>
+		<project>ImageJ</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

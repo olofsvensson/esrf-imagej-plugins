@@ -11,6 +11,10 @@
  *                                                                     *
  * Changes:                                                            *
  *                                                                     *
+ *  1. 4. 2016  Olof Svensson                                          *
+ *              - Reformatted the code                                 *
+ *              - Added support for more EDF data types                *
+ *                                                                     *
  * 18. 2. 2016  Olof Svensson                                          *
  *              - Added support for "SignedInteger"                    *
  *                                                                     *
@@ -164,9 +168,10 @@ public class ESRF_Reader implements PlugIn {
 
 			try {
 				iParam = Integer.valueOf(param).intValue();
-				//double dParam = Integer.valueOf(param).doubleValue();
+				// double dParam = Integer.valueOf(param).doubleValue();
 			} catch (NumberFormatException numberformatexception) {
-			};
+			}
+			;
 			if (key.equals("EDF_BinaryFileName")) {
 				fileInfo.fileName = param;
 				System.out.println("DEBUG: " + key + " = " + param);
@@ -185,19 +190,25 @@ public class ESRF_Reader implements PlugIn {
 				continue;
 			}
 			if (key.equals("DataType")) {
-				if (param.equals("UnsignedLong")
-						|| param.equals("UnsignedInteger")
-						|| param.equals("SignedInteger")) {
+				// Long and integer
+				if (param.equals("SignedLong") || param.equals("SignedInteger")) {
 					fileInfo.fileType = FileInfo.GRAY32_INT;
-				} else if (param.equals("UnsignedShort")) {
-					fileInfo.fileType = FileInfo.GRAY16_UNSIGNED;
-				} else if (param.equals("Float") || param.equals("FloatValue")) {
-					fileInfo.fileType = FileInfo.GRAY32_FLOAT;
-				} else if (param.equals("UnsignedByte")
-						|| param.equals("UnsignedChar")) {
-					fileInfo.fileType = FileInfo.GRAY8;
+				} else if (param.equals("UnsignedLong")
+						|| param.equals("UnsignedInteger")) {
+					fileInfo.fileType = FileInfo.GRAY32_UNSIGNED;
+					// Short
 				} else if (param.equals("SignedShort")) {
 					fileInfo.fileType = FileInfo.GRAY16_SIGNED;
+				} else if (param.equals("UnsignedShort")) {
+					fileInfo.fileType = FileInfo.GRAY16_UNSIGNED;
+					// Byte
+				} else if (param.equals("SingedByte")
+						|| param.equals("UnsignedByte")
+						|| param.equals("UnsignedChar")) {
+					fileInfo.fileType = FileInfo.GRAY8;
+					// Float
+				} else if (param.equals("Float") || param.equals("FloatValue")) {
+					fileInfo.fileType = FileInfo.GRAY32_FLOAT;
 				} else {
 					IJ.log("WARNING: unknown data type " + param);
 				}

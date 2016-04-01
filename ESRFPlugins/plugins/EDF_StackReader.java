@@ -1,7 +1,7 @@
 /*
  ***********************************************************************
  *                                                                     *
- * EDF Stack Reader                                            *
+ * EDF Stack Reader                                                    *
  *                                                                     *
  * Written and maintained by Olof Svensson (svensson@esrf.fr)          *
  *                                                                     *
@@ -9,15 +9,17 @@
  * reading EDF/EHF format headers                                      *
  *                                                                     *
  *                                                                     *
- * Changes:         
- * 
- * 04.01. 2012  Olof Svensson
- *              - First version of the stack reader
+ * Changes:                                                            *
+ *                                                                     *
+ *  1. 4. 2016  Olof Svensson                                          *
+ *              - Reformatted the code                                 *
+ *              - Added support for more EDF data types                *
+ *                                                                     *
+ * 04.01. 2012  Olof Svensson                                          *
+ *              - First version of the stack reader                    *
  *                                                                     *
  ***********************************************************************
  */
-
-
 
 import java.io.*;
 import java.util.*;
@@ -59,7 +61,7 @@ public class EDF_StackReader implements PlugIn {
 		if (fileName == null)
 			return;
 
-		// Extract suffix 
+		// Extract suffix
 		int dot = fileName.lastIndexOf(".");
 		String suffix = fileName.substring(dot + 1);
 		if (!suffix.equals("edf")) {
@@ -67,7 +69,7 @@ public class EDF_StackReader implements PlugIn {
 		}
 
 		// Extract prefix
-		int index = dot-1;
+		int index = dot - 1;
 		boolean foundLastIndex = false;
 		while (!foundLastIndex) {
 			char digit = fileName.charAt(index);
@@ -78,24 +80,24 @@ public class EDF_StackReader implements PlugIn {
 			}
 		}
 
-		String prefix = fileName.substring(0, index+1);
+		String prefix = fileName.substring(0, index + 1);
 
 		// Loop through all the images in the directory
 		File path = new File(directory);
-		File files[]; 
-
+		File files[];
 
 		files = path.listFiles();
-		Arrays.sort(files, new Comparator<File>(){
-			public int compare(File f1, File f2)
-			{
-				return f1.getName().toString().compareTo(f2.getName().toString()); 
-			} });
+		Arrays.sort(files, new Comparator<File>() {
+			public int compare(File f1, File f2) {
+				return f1.getName().toString()
+						.compareTo(f2.getName().toString());
+			}
+		});
 
-		for (File edfFile: files) {
+		for (File edfFile : files) {
 			// Check that the file starts with the prefix
 			if (edfFile.getName().contains(prefix)) {
-				IJ.log("Reading image: "+edfFile.getName());
+				IJ.log("Reading image: " + edfFile.getName());
 				// The following code is "borrowed" from ij.plugin.Raw
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.fileFormat = FileInfo.RAW;
@@ -117,7 +119,7 @@ public class EDF_StackReader implements PlugIn {
 				ImagePlus imp = fileOpener.open(false);
 
 				if (newStack == null) {
-					newStack= new ImageStack(fileInfo.width, fileInfo.height);
+					newStack = new ImageStack(fileInfo.width, fileInfo.height);
 				}
 				ImageProcessor ip = imp.getChannelProcessor();
 				newStack.addSlice(edfFile.getName().toString(), ip);
@@ -178,16 +180,17 @@ public class EDF_StackReader implements PlugIn {
 				continue;
 			key = token.substring(1, i - 1).trim();
 			param = token.substring(i + 1).trim();
-			//IJ.log(key + ": " + param);
+			// IJ.log(key + ": " + param);
 
 			// For debugging - output to stdout is persistent:
 			// System.out.println("DOING |"+key+"|: |" + param+"|");
 
 			try {
 				iParam = Integer.valueOf(param).intValue();
-				//double dParam = Integer.valueOf(param).doubleValue();
+				// double dParam = Integer.valueOf(param).doubleValue();
 			} catch (NumberFormatException numberformatexception) {
-			};
+			}
+			;
 			if (key.equals("EDF_BinaryFileName")) {
 				fileInfo.fileName = param;
 				System.out.println("DEBUG: " + key + " = " + param);
@@ -206,18 +209,25 @@ public class EDF_StackReader implements PlugIn {
 				continue;
 			}
 			if (key.equals("DataType")) {
-				if (param.equals("UnsignedLong")
-						|| param.equals("UnsignedInteger")) {
+				// Long and integer
+				if (param.equals("SignedLong") || param.equals("SignedInteger")) {
 					fileInfo.fileType = FileInfo.GRAY32_INT;
-				} else if (param.equals("UnsignedShort")) {
-					fileInfo.fileType = FileInfo.GRAY16_UNSIGNED;
-				} else if (param.equals("Float") || param.equals("FloatValue")) {
-					fileInfo.fileType = FileInfo.GRAY32_FLOAT;
-				} else if (param.equals("UnsignedByte")
-						|| param.equals("UnsignedChar")) {
-					fileInfo.fileType = FileInfo.GRAY8;
+				} else if (param.equals("UnsignedLong")
+						|| param.equals("UnsignedInteger")) {
+					fileInfo.fileType = FileInfo.GRAY32_UNSIGNED;
+					// Short
 				} else if (param.equals("SignedShort")) {
 					fileInfo.fileType = FileInfo.GRAY16_SIGNED;
+				} else if (param.equals("UnsignedShort")) {
+					fileInfo.fileType = FileInfo.GRAY16_UNSIGNED;
+					// Byte
+				} else if (param.equals("SingedByte")
+						|| param.equals("UnsignedByte")
+						|| param.equals("UnsignedChar")) {
+					fileInfo.fileType = FileInfo.GRAY8;
+					// Float
+				} else if (param.equals("Float") || param.equals("FloatValue")) {
+					fileInfo.fileType = FileInfo.GRAY32_FLOAT;
 				} else {
 					IJ.log("WARNING: unknown data type " + param);
 				}
